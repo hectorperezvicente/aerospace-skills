@@ -26,4 +26,4 @@ Skills are discovered automatically from the `skills/` directory.
   - author: hectorperezvicente
   - version: "1.0"
 
-*Last updated: $(date +%Y-%m-%d)*
+*Last updated: 2026-05-28*
