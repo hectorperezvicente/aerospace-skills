@@ -1,68 +1,44 @@
 {
-  "skill_name": "amateur-rocketry",
   "evals": [
     {
-      "id": 0,
-      "prompt": "You are reviewing C flight software for a student rocket's avionics board. Check this code snippet for compliance with NASA Power of 10 subset rules (no goto, no unbounded recursion, loops with static bounds), MISRA C essentials (no implicit signedness changes, initialize variables), and BARR-C guidelines (no static globals, use enums for state machines, return status from functions). The code implements an altitude sensor reading function:",
-      "expected_output": "The review should identify violations and provide fixes: 1) Replace any goto statements with structured error handling using return codes, 2) Ensure all loops have compile-time upper bounds, 3) Eliminate unbounded recursion by adding depth limits or converting to iteration, 4) Fix implicit signedness conversions with explicit casts, 5) Initialize all variables at declaration, 6) Remove static global variables or add static specifier, 7) Use enum types for state machines, 8) Ensure every function returns a status code indicating success/failure.",
-      "expectations": [
-        "Identifies and flags goto statement usage",
-        "Checks for loops without static upper bounds", 
-        "Detects unbounded recursion without depth limits",
-        "Flags implicit conversions that change signedness",
-        "Notes uninitialized variable usage",
-        "Identifies global variables lacking static specifier",
-        "Recommends enum types for state machine implementation",
-        "Verifies functions return status codes"
+      "name": "safety-standards-application",
+      "prompt": "You are developing flight software for a high-power rocket. Describe how you would implement the NASA Power of 10 rules, MISRA-C essentials, and BARR-C guidelines in your C codebase.",
+      "assertions": [
+        "Should mention all 3 NASA Power of 10 rules: no goto, no unbounded recursion, loops with static bounds",
+        "Should mention MISRA-C rules about signedness conversions, initialization, and macro usage",
+        "Should mention BARR-C guidelines about global variables and return code checking",
+        "Should provide specific examples of how to implement each rule"
       ]
     },
     {
-      "id": 1,
-      "prompt": "Design a flight state machine for a dual-deploy model rocket with the following flight phases: pre-flight (ground operations, sensor calibration), boost (motor ignition to burnout), coast (unpowered ascent to apogee), apogee (peak altitude), descent (drogue chute descent), recovery (main chute descent to ground), and landed (post-flight). The rocket uses redundant apogee detection (primary barometric, secondary accelerometer-based).",
-      "expected_output": "A state machine design with: 1) Enum defining all seven states (PRE_FLIGHT, BOOST, COAST, APOGEE, DESCENT, RECOVERY, LANDED), 2) State transition table showing guarded transitions (e.g., BOOST→COAST only on burnout detection, APOGEE→DESCENT only on apogee confirmation), 3) Entry/exit actions for each state (e.g., entering BOOST activates engine monitoring, exiting BOOST logs boost phase data), 4) Redundant apogee logic requiring both sensors to agree before transitioning to apogee state, 5) Error handling for sensor disagreements or premature transition attempts.",
-      "expectations": [
-        "Defines enum with all seven flight states",
-        "Shows state transition table with guarded conditions",
-        "Specifies entry actions for each state",
-        "Specifies exit actions for each state", 
-        "Implements redundant apogee detection logic",
-        "Includes error handling for sensor conflicts",
-        "Handles premature transition attempts safely",
-        "Uses descriptive state names matching flight phases"
+      "name": "state-machine-design",
+      "prompt": "Design a flight state machine for a two-stage rocket with boost, coast, apogee, descent, and recovery phases. Include entry/exit actions and guarded transitions.",
+      "assertions": [
+        "Should define states: pre-flight, boost, coast, apogee, descent, recovery, landed",
+        "Should include transition conditions (e.g., burnout detection for boost->coast)",
+        "Should include entry/exit actions for at least two states",
+        "Should mention guarded transitions with safety checks"
       ]
     },
     {
-      "id": 2,
-      "prompt": "Define a LoRa telemetry packet structure for a rocket flight computer that needs to transmit data from 4 sensors: pressure (4 bytes), temperature (4 bytes), acceleration (3 axes × 4 bytes each = 12 bytes), and GPS (latitude 4 bytes, longitude 4 bytes, altitude 4 bytes = 12 bytes). Total payload is 32 bytes. The system operates in the 915 MHz ISM band and must include error detection.",
-      "expected_output": "A LoRa packet specification with: 1) Preamble: 8+ bytes of 0x55 for synchronization, 2) Sync Word: 2 bytes (0x34 0x12 for LoRaWAN compatibility), 3) Header: 4 bytes explicit header (Address, Length, Packet Type, Flags), 4) Payload: 32 bytes containing sensor data in defined order, 5) CRC: 2 bytes CCITT-CRC for error detection, 6) Recommended configuration: SF7-SF12, 125 kHz bandwidth, 4/5 coding rate, 7) Frequency planning within 902-928 MHz band with specific channel recommendations.",
-      "expectations": [
-        "Specifies 8+ byte preamble (0x55) for synchronization",
-        "Defines 2-byte sync word (0x34 0x12)",
-        "Describes 4-byte explicit header structure",
-        "Details 32-byte payload format for 4 sensors",
-        "Includes 2-byte CCITT-CRC for error detection",
-        "Recommends SF7-SF12 spreading factor range",
-        "Specifies 125 kHz bandwidth",
-        "Recommends 4/5 coding rate",
-        "Places frequency in 902-928 MHz ISM band",
-        "Provides channel spacing recommendation"
+      "name": "telemetry-specification",
+      "prompt": "Specify a LoRa-based telemetry system for a rocket that needs to transmit GPS coordinates, altitude, velocity, and sensor data at 1Hz during flight.",
+      "assertions": [
+        "Should specify LoRa packet structure (preamble, sync word, header, payload, CRC)",
+        "Should mention frequency band selection based on launch location (ISM bands)",
+        "Should include FEC (Forward Error Correction) implementation",
+        "Should specify SD card data logging with timestamped files and buffered writes"
       ]
     },
     {
-      "id": 3,
-      "prompt": "Create a unit test plan for testing a barometric altitude sensor driver function that converts raw pressure readings to altitude in meters. The function signature is: float calculate_altitude(uint32_t pressure_pa, float temperature_c). It uses the barometric formula with sea level pressure compensation. Test should cover normal operation, edge cases, and error conditions.",
-      "expected_output": "A test plan using the Unity framework with: 1) Arrange-Act-Assert structure for each test case, 2) Normal range test (sea level to 5000m altitude), 3) Edge cases: minimum pressure, maximum pressure, extreme temperatures, 4) Invalid input handling (out-of-range pressure values), 5) Mocked sensor interface tests, 6) Descriptive test names indicating what each test validates, 7) Test for temperature compensation accuracy, 8) Boundary value analysis for pressure inputs.",
-      "expectations": [
-        "Uses Unity Arrange-Act-Assert pattern",
-        "Tests normal operating range (sea level to 5000m)",
-        "Covers edge cases (min/max pressure, temperature extremes)",
-        "Tests invalid input handling and error conditions",
-        "Includes mocked sensor interface tests",
-        "Features descriptive test names",
-        "Validates temperature compensation logic",
-        "Applies boundary value analysis to inputs",
-        "Tests sea level pressure compensation",
-        "Verifies function returns float altitude in meters"
+      "name": "testing-strategy",
+      "prompt": "Define a comprehensive testing strategy for flight software including unit, integration, hardware-in-the-loop (HIL), and flight simulation tests.",
+      "assertions": [
+        "Should require unit tests with mock hardware abstractions",
+        "Should require integration testing for component interfaces",
+        "Should require HIL testing with simulated inputs",
+        "Should require flight simulation end-to-end tests",
+        "Should mention specific frameworks like Unity, CMock, or Ceedling"
       ]
     }
   ]
